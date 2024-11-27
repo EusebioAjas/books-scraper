@@ -1,0 +1,2 @@
+--format doc
+--require ./app/spec/spec_helper.rb
