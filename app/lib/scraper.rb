@@ -2,6 +2,7 @@
 
 require 'httparty'
 require 'nokogiri'
+require_relative '../../db/db_manager'
 
 Book = Struct.new(:image_url, :rating, :title, :price, :stock)
 
@@ -61,7 +62,6 @@ scraper = Scraper.new
 spinner = ['|', '/', '-', '\\']
 i = 0
 page_number = 1
-
 while true
   next_page = scraper.scrape_page(page_number)
   print "\rLoading #{spinner[i]}"
@@ -70,8 +70,10 @@ while true
 
   page_number += 1
 end
-
 print "\rDone!         \n"
 
-print scraper.books
-print scraper.books.size
+# Database store
+db_manager = DBManager.new
+db_manager.create_table
+db_manager.insert(scraper.books)
+db_manager.find_all
