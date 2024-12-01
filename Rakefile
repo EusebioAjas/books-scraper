@@ -20,8 +20,8 @@ task :test do
   system 'rspec app/spec/*.rb --format doc'
 end
 
-task :code do
-  system 'ruby app/lib/main.rb'
+task :scraper do
+  system 'ruby app/lib/scraper.rb'
 end
 
 task default: %w[test source test code]
