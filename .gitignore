@@ -1,3 +1,6 @@
 tmp
 sandi_meter
 coverage
+*.db
+*.log
+db/books.db

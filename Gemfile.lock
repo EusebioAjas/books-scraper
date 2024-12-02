@@ -150,6 +150,9 @@ GEM
       simplecov_json_formatter (~> 0.1)
     simplecov-html (0.13.1)
     simplecov_json_formatter (0.1.4)
+    sqlite3 (2.3.1)
+      mini_portile2 (~> 2.8.0)
+    sqlite3 (2.3.1-x86_64-linux-gnu)
     thread_safe (0.3.6)
     tty-which (0.5.0)
     unicode-display_width (3.1.2)
@@ -175,6 +178,7 @@ DEPENDENCIES
   rubycritic
   rubycritic-small-badge
   sandi_meter
+  sqlite3
 
 RUBY VERSION
    ruby 3.3.6p108
