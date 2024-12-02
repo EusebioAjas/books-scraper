@@ -6,8 +6,9 @@ require 'sqlite3'
 class DBManager
   attr_accessor :db
 
-  def initialize
-    @db = SQLite3::Database.new 'db/books.db'
+  def initialize(db_name)
+    @db = SQLite3::Database.new(db_name)
+    @cache = {}
   end
 
   def create_table
@@ -23,15 +24,6 @@ class DBManager
     SQL
   end
 
-  private
-
-  def row_printer(row)
-    id, title, price, image_url, rating, stock = row
-    puts "ID=#{id} title=#{title} price=#{price} image=#{image_url} rating=#{rating}} stock=#{stock}"
-  end
-
-  public
-
   def insert(books)
     books.each do |book|
       @db.execute(
@@ -45,19 +37,9 @@ class DBManager
     @db.close
   end
 
-  def find_all
-    results = @db.execute('SELECT * FROM books')
-
-    results.each do |row|
-      row_printer(row)
-    end
-  end
-
-  def find(title)
-    results = db.execute('SELECT * FROM books WHERE title = ?', [title])
-    results.each do |row|
-      row_printer(row)
-    end
+  def search_by_name(book_name)
+    query = 'SELECT * FROM books WHERE title LIKE ?'
+    @db.execute(query, "%#{book_name}%")
   end
 
   def close
