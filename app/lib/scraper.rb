@@ -2,78 +2,94 @@
 
 require 'httparty'
 require 'nokogiri'
-require_relative '../../db/db_manager'
 
-Book = Struct.new(:image_url, :rating, :title, :price, :stock)
+# Sample Item Struct
+Item = Struct.new(:image_url, :rating, :title, :price, :stock)
 
-# Sample Scraper class
+# Scraper
 class Scraper
   BASE_URL = 'https://books.toscrape.com'
+  RATING_MAP = {
+    'One' => 1,
+    'Two' => 2,
+    'Three' => 3,
+    'Four' => 4,
+    'Five' => 5
+  }.freeze
 
-  attr_accessor :books
+  attr_reader :books
 
   def initialize
     @books = []
   end
 
-  private
-
-  def book_parser(html_book)
-    img_src = html_book.css('img.thumbnail').first.attribute('src').value
-    image = "#{BASE_URL}/#{img_src}"
-
-    rating_element = html_book.at_css('.star-rating')
-    rating = rating_element['class'].split[1] if rating_element
-
-    title = html_book.css('h3>a').first.attribute('title').value
-    price = html_book.css('p.price_color').first.text
-    stock = html_book.css('i.icon-ok').first.attribute('class').value
-
-    Book.new(image, rating, title, price, stock)
-  end
-
-  public
-
   def scrape_page(page_number)
-    url = "#{BASE_URL}/catalogue/page-#{page_number}.html"
-    response = HTTParty.get(url)
-    document = Nokogiri::HTML(response.body)
+    url = build_url(page_number)
+    response = fetch_page(url)
 
     return nil unless response.success?
 
-    selector = 'article.product_pod'
-
-    html_books = document.css(selector)
+    html_books = parse_books(response.body)
     html_books.each do |html_book|
       @books << book_parser(html_book)
     end
-    next_page_link = document.css('.next')
 
-    next_page_link ? true : false
+    next_page_available?(response.body)
   end
 
-  def greetings
-    'hello'
+  private
+
+  def book_parser(html_book)
+    image_url = extract_image_url(html_book)
+    rating = extract_rating(html_book)
+    title = extract_title(html_book)
+    price = extract_price(html_book)
+    stock = extract_stock(html_book)
+
+    Item.new(image_url, rating, title, price, stock)
+  end
+
+  def build_url(page_number)
+    "#{BASE_URL}/catalogue/page-#{page_number}.html"
+  end
+
+  def fetch_page(url)
+    HTTParty.get(url)
+  end
+
+  def parse_books(html_content)
+    document = Nokogiri::HTML(html_content)
+    document.css('article.product_pod')
+  end
+
+  def next_page_available?(html_content)
+    document = Nokogiri::HTML(html_content)
+    !document.css('.next').empty?
+  end
+
+  def extract_image_url(html_book)
+    img_src = html_book.css('img.thumbnail').first.attribute('src').value
+    "#{BASE_URL}/#{img_src}"
+  end
+
+  def extract_rating(html_book)
+    rating_element = html_book.at_css('.star-rating')
+    return 0 unless rating_element
+
+    rating_class = rating_element['class'].split[1]
+    RATING_MAP[rating_class] || 0
+  end
+
+  def extract_title(html_book)
+    html_book.css('h3>a').first.attribute('title').value
+  end
+
+  def extract_price(html_book)
+    html_book.css('p.price_color').first.text.gsub('£', '').to_f
+  end
+
+  def extract_stock(html_book)
+    stock_value = html_book.css('i.icon-ok').first
+    stock_value ? 1 : 0
   end
 end
-
-scraper = Scraper.new
-
-spinner = ['|', '/', '-', '\\']
-i = 0
-page_number = 1
-while true
-  next_page = scraper.scrape_page(page_number)
-  print "\rLoading #{spinner[i]}"
-  i = (i + 1) % spinner.length
-  break unless next_page
-
-  page_number += 1
-end
-print "\rDone!         \n"
-
-# Database store
-db_manager = DBManager.new
-db_manager.create_table
-db_manager.insert(scraper.books)
-db_manager.find_all

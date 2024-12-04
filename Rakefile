@@ -21,7 +21,11 @@ task :test do
 end
 
 task :scraper do
-  system 'ruby app/lib/scraper.rb'
+  system 'ruby app/lib/scraper_task.rb'
+end
+
+task :searcher do
+  system 'ruby app/lib/main.rb'
 end
 
 task default: %w[test source test code]
