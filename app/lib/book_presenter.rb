@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-# BookPresenter
+##
+# This class is responsible for presenting various messages and formatting the output
+# in the Book Search CLI (Command Line Interface). It handles printing information to the user
+# related to book searches, search results, and error messages.
 class BookPresenter
   def self.print_welcome
     puts 'Welcome to the Book Search CLI!'

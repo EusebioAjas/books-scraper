@@ -3,7 +3,10 @@
 require_relative 'db/books_respository'
 require_relative 'db/db_manager'
 
-# This class handles searching for books in the database
+##
+# This class is responsible for searching books in the database.
+# It acts as a bridge between the user and the database, providing functionality
+# to search for books by their name using the `BooksRepository` from the `DBManager`.
 class BookSearcher
   def initialize(db_name)
     @db = DBManager.new(db_name)

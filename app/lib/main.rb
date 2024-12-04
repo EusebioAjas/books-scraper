@@ -3,7 +3,10 @@
 require_relative './book_searcher'
 require_relative './book_presenter'
 
-# BookSearcher
+##
+# The `BookSearchCLI` class provides the command-line interface for searching books
+# in the database. It interacts with the `BookSearcher` class to perform the search
+# and presents the results using the `BookPresenter` class.
 class BookSearchCLI
   def initialize
     @searcher = BookSearcher.new('db/books.db')
