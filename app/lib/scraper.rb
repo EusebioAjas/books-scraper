@@ -3,10 +3,15 @@
 require 'httparty'
 require 'nokogiri'
 
-# Sample Item Struct
+##
+# The `Item` struct is used to store and represent the scraped data for each book
+# in a structured way, making it easy to access individual book attributes.
 Item = Struct.new(:image_url, :rating, :title, :price, :stock)
 
-# Scraper
+##
+# The class is responsible for scraping book data from the `https://books.toscrape.com` website.
+# It retrieves information about books from each page, including the title, image URL, rating,
+# price, and stock availability.
 class Scraper
   BASE_URL = 'https://books.toscrape.com'
   RATING_MAP = {
