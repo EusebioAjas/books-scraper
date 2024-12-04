@@ -1,6 +1,15 @@
 # frozen_string_literal: true
 
-# Books repository
+##
+# This class handles Create and Read operations related to books in the system.
+#
+# It allows for:
+# - Insert books to the collection.
+# - Retrieving books details by book title.
+#
+# Additionally, the class:
+# - Implements very simple search cache to improve the efficiency of repeated search queries.
+# - Validates input data when adding books.
 class BooksRepository
   def initialize(connection_manager)
     @connection_manager = connection_manager

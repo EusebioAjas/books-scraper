@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
-# SchemaManager
+##
+# This class is responsible for managing the database schema, including
+# creating tables for the moment.
+#
+# - Creates and manages the schema for the database.
+# - Defines the structure of the `books` table in the database.
+#
 class SchemaManager
   def initialize(connection_manager)
     @connection_manager = connection_manager

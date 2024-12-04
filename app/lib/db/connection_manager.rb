@@ -2,7 +2,14 @@
 
 require 'sqlite3'
 
-# ConnectionManager
+##
+# This class is responsible for managing the connection to a SQLite database.
+#
+# It handles:
+# - Establish a connection to the database upon initialization.
+# - Reconnecting to the database if the connection is closed.
+# - Providing a convenient method (`with_connection`) to perform database operations within a block.k:w
+# - Raising custom error handling for database-related issues.
 class ConnectionManager
   class DatabaseError < StandardError; end
 
