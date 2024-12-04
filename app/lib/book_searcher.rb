@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../db/db_manager'
+require_relative 'db/books_respository'
+require_relative 'db/db_manager'
 
 # This class handles searching for books in the database
 class BookSearcher
@@ -9,6 +10,6 @@ class BookSearcher
   end
 
   def search(book_name)
-    @db.search_by_name(book_name)
+    @db.books.search_by_name(book_name)
   end
 end

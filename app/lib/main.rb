@@ -1,39 +1,41 @@
 # frozen_string_literal: true
 
 require_relative './book_searcher'
+require_relative './book_presenter'
 
-def row_printer(row)
-  id, title, price, image_url, rating, stock = row
-  puts "ID: #{id}"
-  puts "Title: #{title}"
-  puts "Price: #{price}"
-  puts "Image: #{image_url}"
-  puts "Rating: #{rating}"
-  puts "Stock: #{stock}"
-  puts '----------------------------------------------------------------------------------------------'
-end
-
-def start_cli
-  puts 'Welcome to the Book Search CLI!'
-  loop do
-    print "Enter a book name to search for (or type 'exit' to quit): "
-    query = gets.chomp.strip
-
-    break if query.downcase == 'exit'
-
-    searcher = BookSearcher.new('db/books.db')
-    result = searcher.search(query)
-    if result.empty?
-      puts "No books found matching '#{query}'"
-    else
-      result.each do |row|
-        row_printer(row)
-      end
-    end
-  rescue Interrupt
-    puts "\nSearch interruped. Returning to the search prompt..."
+# BookSearcher
+class BookSearchCLI
+  def initialize
+    @searcher = BookSearcher.new('db/books.db')
   end
-  puts 'Goodbye!'
+
+  def start
+    BookPresenter.print_welcome
+
+    loop do
+      BookPresenter.print_search_prompt
+      query = gets&.chomp&.strip
+
+      break if query&.downcase == 'exit'
+      next if query.nil? || query.empty?
+
+      search_and_display(query)
+    rescue Interrupt
+      BookPresenter.print_interrupt_message
+    end
+
+    BookPresenter.print_goodbye
+  end
+
+  private
+
+  def search_and_display(query)
+    results = @searcher.search(query)
+    BookPresenter.print_search_results(results, query)
+  rescue SQLite3::Exception => e
+    BookPresenter.print_error("Database error: #{e.message}")
+  end
 end
 
-start_cli
+book_searcher = BookSearchCLI.new
+book_searcher.start
