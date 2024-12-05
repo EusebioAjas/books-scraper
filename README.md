@@ -12,6 +12,11 @@ Execute the following command to install gems.
 ```
 bundle install
 ```
+### Run tests
+---------
+```
+rake test
+```
 
 ### Run scripts
 ---------
