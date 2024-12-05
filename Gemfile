@@ -11,6 +11,7 @@ gem 'rubocop', '~> 1.69', require: false
 gem 'rubycritic', require: false
 gem 'rubycritic-small-badge', require: false
 gem 'sandi_meter'
+gem 'webmock'
 
 # database
 gem 'sqlite3'
